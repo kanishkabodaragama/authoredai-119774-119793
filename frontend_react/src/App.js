@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { AuthProvider, AuthContext } from "./AuthContext";
-import { Login, Register, Logout } from "./AuthComponents";
+import { Login, Register } from "./AuthComponents";
 import ArticleForm from "./ArticleForm";
+import Navbar from "./Navbar";
 
 // PUBLIC_INTERFACE
 function App() {
   const [theme, setTheme] = useState('light');
-  const [mode, setMode] = useState('login'); // login or register
+  const [mode, setMode] = useState('login'); // "login" | "register" | null for routed panel
+  const [nav, setNav] = useState("generate"); // For minimal navigation
 
   // Effect to apply theme to document element
   useEffect(() => {
@@ -46,37 +48,43 @@ function App() {
       <AuthContext.Consumer>
         {({ isAuthenticated, user }) => (
           <div className="App">
-            <header className="App-header">
-              <button
-                className="theme-toggle"
-                onClick={toggleTheme}
-                aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-              >
-                {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
-              </button>
+            <Navbar
+              onNav={setNav}
+              current={isAuthenticated ? nav : mode}
+              setMode={isAuthenticated ? undefined : setMode}
+            />
+            <button
+              className="theme-toggle"
+              onClick={toggleTheme}
+              aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+            >
+              {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
+            </button>
+            <div style={{ marginTop: 32 }}>
               <img src={logo} className="App-logo" alt="logo" />
-              <p>
-                AI Article Writer Demo (<code>src/App.js</code>)
-              </p>
-              <p>
-                Current theme: <strong>{theme}</strong>
-              </p>
-              {isAuthenticated ? (
-                <>
-                  <div>Welcome{user && user.email ? `, ${user.email}` : "!"}</div>
-                  <Logout className="auth-btn" />
+            </div>
+            <p>
+              AI Article Writer Demo (<code>src/App.js</code>)
+            </p>
+            <p>
+              Current theme: <strong>{theme}</strong>
+            </p>
+            {isAuthenticated ? (
+              <>
+                {/* Nav could be used for more routes, for now only 1 main */}
+                {nav === "generate" && (
                   <ArticleForm />
-                </>
-              ) : (
-                <AuthPanel/>
-              )}
-            </header>
+                )}
+              </>
+            ) : (
+              // Show AuthPanel only if mode is set, else nothing (after login success)
+              mode != null && <AuthPanel />
+            )}
           </div>
         )}
       </AuthContext.Consumer>
     </AuthProvider>
   );
 }
-
 
 export default App;
