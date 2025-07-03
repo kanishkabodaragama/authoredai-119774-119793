@@ -9,6 +9,36 @@ This project provides a minimal React template with a clean, modern UI and minim
 - **Fast**: Minimal dependencies for quick loading times
 - **Simple**: Easy to understand and modify
 
+## Local API Proxy and CORS
+
+### Development API Proxy
+
+- The React dev server is configured to proxy any request starting with `/api` to your backend server.
+    - By default, `"proxy": "http://localhost:5000"` is set in `package.json`.
+    - This allows you to use `/api` in your frontend code, and requests will automatically route to your backend running at `localhost:5000`.
+- You do NOT need to manually configure CORS headers on the frontend; the dev-server proxy solves most cross-origin issues for development.
+
+### Configuring the Backend for Local CORS
+
+- You must enable CORS for `http://localhost:3000` in your backend API (`backend_ai_service`).
+    - Example for Express.js:
+        ```js
+        // In your Express backend (development only):
+        const cors = require('cors');
+        app.use(cors({
+          origin: 'http://localhost:3000',
+          credentials: true
+        }));
+        ```
+    - This allows API requests from the dev frontend.
+
+### API Base URL for Production
+
+- In production, your frontend needs to know where the backend lives.
+    - Use the `REACT_APP_API_BASE_URL` environment variable in `.env`.
+    - See `.env.template` for setup. For dev, you usually do NOT need to edit this.
+    - The API calls use `/api` as their base path, relying on the proxy during dev.
+
 ## Getting Started
 
 In the project directory, you can run:
