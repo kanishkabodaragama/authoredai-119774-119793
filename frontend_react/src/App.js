@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import { AuthProvider, AuthContext } from "./AuthContext";
 import { Login, Register, Logout } from "./AuthComponents";
+import ArticleForm from "./ArticleForm";
 
 // PUBLIC_INTERFACE
 function App() {
@@ -64,9 +65,7 @@ function App() {
                 <>
                   <div>Welcome{user && user.email ? `, ${user.email}` : "!"}</div>
                   <Logout className="auth-btn" />
-                  <p>
-                    You are logged in. (Article tool UI would appear here.)
-                  </p>
+                  <ArticleForm />
                 </>
               ) : (
                 <AuthPanel/>
